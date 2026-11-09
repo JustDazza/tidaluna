@@ -1,0 +1,7 @@
+packages:
+  - "plugins/*"
+
+allowBuilds:
+  electron: true
+  esbuild: true
+  sharp: true

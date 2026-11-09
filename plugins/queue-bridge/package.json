@@ -1,0 +1,12 @@
+{
+  "name": "@justdazza/queue-bridge",
+  "version": "1.0.0.10",
+  "description": "Adds Twitch !sr song requests to your Tidal queue via Streamer.bot",
+  "main": "index.ts",
+  "author": {
+		"name": "JustDazza",
+		"url": "https://github.com/JustDazza",
+		"avatarUrl": ""
+	},
+  "license": "MIT"
+}
