@@ -22,6 +22,9 @@ const REPLY_ACTION_NAME = "Queue Bridge Reply";
 const QUEUE_MODE: "next" | "last" = "last";
 const INCLUDE_TRACK_LINK = true;
 const SEARCH_LIMIT = 5;
+const MAX_QUERY_LENGTH = 100;
+const DEFAULT_COOLDOWN_SECONDS = 10;
+
 function getCooldownMs(): number {
 	const seconds = Number((settings as any).cooldownSeconds);
 	return (Number.isFinite(seconds) && seconds >= 0 ? seconds : DEFAULT_COOLDOWN_SECONDS) * 1000;
@@ -242,7 +245,7 @@ function getQueuePosition(trackId: number | string, fromEnd = true): number | nu
 
 let workingAddLastIndex = -1;
 
-let queueLock: Promise<void> = Promise.resolve();
+let queueLock: Promise<unknown> = Promise.resolve();
 
 async function addToEnd(track: FoundTrack): Promise<boolean> {
 	const store = getLunaLib().redux?.store;
@@ -369,11 +372,17 @@ async function handleRequest(req: ChatRequest) {
 	if (req.username && req.role < 3) {
 		const key = req.username.toLowerCase();
 		const now = Date.now();
-		if (now - (lastRequestAt.get(key) ?? 0) < USER_COOLDOWN_MS) {
+		if (now - (lastRequestAt.get(key) ?? 0) < getCooldownMs()) {
 			console.log(`[QueueBridge] Cooldown active for ${req.username}, ignoring.`);
 			return;
 		}
 		lastRequestAt.set(key, now);
+	}
+
+	if (req.query.length > MAX_QUERY_LENGTH) {
+		console.log(`[QueueBridge] Rejected over-long request (${req.query.length} chars) from ${req.username || "unknown"}.`);
+		sendTwitchMessage(`❌ ${userTag}That request is too long.`);
+		return;
 	}
 
 	console.log(`[QueueBridge] Extracted query: "${req.query}" from ${req.username || "unknown"}`);
@@ -390,7 +399,7 @@ async function handleRequest(req: ChatRequest) {
 
 		if (!track) {
 			console.warn(`[QueueBridge] Track not found for: "${searchQuery}"`);
-			sendTwitchMessage(`❌ ${userTag}Could not find '${searchQuery}' on Tidal.`);
+			sendTwitchMessage(`❌ ${userTag}Could not find that song on Tidal.`);
 			return;
 		}
 

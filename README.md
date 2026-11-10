@@ -94,7 +94,8 @@ Tags such as `(Official Video)`, `[Lyric Video]`, `(Audio)`, `(HD)`, `(4K)`, `(R
 | Queued, position known | `@viewer, added Song - Artist to the queue at #3 https://tidal.com/browse/track/...` |
 | Queued as the next song | `... to the queue at #1 (playing next) ...` |
 | Queued, position unavailable | `@viewer, added Song - Artist to the queue https://tidal.com/browse/track/...` |
-| Nothing found | `❌ @viewer Could not find '<search>' on Tidal.` |
+| Nothing found | `❌ @viewer Could not find that song on Tidal.` |
+| Request too long | `❌ @viewer That request is too long.` |
 | Unreadable request | `❌ @viewer Could not parse a valid track name.` |
 | Unexpected error | `❌ @viewer Something went wrong queueing that song.` |
 
@@ -122,6 +123,7 @@ A few options live at the top of `index.ts` rather than in the settings panel:
 | `REPLY_ACTION_NAME` | `"Queue Bridge Reply"` | Name of the Streamer.bot action used for replies. |
 | `QUEUE_MODE` | `"last"` | `"last"` adds to the end of the queue, `"next"` adds after the current track. |
 | `INCLUDE_TRACK_LINK` | `true` | Appends a Tidal link to chat replies. Set to `false` if links are blocked in your chat. |
+| `MAX_QUERY_LENGTH` | `100` | Requests longer than this many characters are rejected. |
 | `SEARCH_LIMIT` | `5` | How many Tidal results are considered when picking the best match. |
 
 ---
